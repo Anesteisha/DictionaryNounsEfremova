@@ -96,7 +96,7 @@ public class RussianNouns {
 
 
 
-                //выводится дефиниция(толкование) из словаря Ефремовой
+                //выводит дефиницию(толкование) из словаря Ефремовой
 
                 {
                     definition = a;
@@ -121,7 +121,7 @@ public class RussianNouns {
 
         }
 
-
+              //если в строке есть лишние знаки аля " (1)", убирает
 
         for (int i = 1; i < 9; i++) {
 
@@ -141,6 +141,8 @@ public class RussianNouns {
             }
 
         }
+
+        //если в строке есть лишние знаки аля " (1*)", убирает
 
         for (int i = 1; i < 9; i++) {
 
@@ -165,6 +167,8 @@ public class RussianNouns {
 
         }
 
+        //если в строке есть лишние знаки аля "(1)*", убирает
+
         for (int i = 1; i < 9; i++) {
 
             if (definition.indexOf("(" + i +"*)")>0) {
@@ -188,6 +192,8 @@ public class RussianNouns {
 
         }
 
+        //если в строке есть лишние знаки аля " (1-2)", убирает
+
         Pattern p = Pattern.compile("\\s\\D\\d\\D\\d\\D(\\s|\\.|,)");
         Matcher m = p.matcher(definition);
 
@@ -203,6 +209,7 @@ public class RussianNouns {
             definition = definition.copyValueOf(mas);
         }
 
+        //если в строке есть лишние знаки аля " (1*2-3)", убирает
 
         p = Pattern.compile("\\s\\D\\d\\D\\d\\D\\d\\D(\\s|\\.|,)");
         m = p.matcher(definition);
