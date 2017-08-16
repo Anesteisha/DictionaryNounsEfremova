@@ -3,44 +3,102 @@ package com.example;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.regex.*;
+import java.io.IOException;
 
 
 
 public class RussianNouns {
+    public static final String TOLKOVYJ_SLOVAR_EFREMOVOJ= "C:\\Users\\ANESTEISHA\\толковый словарь Ефремовой.txt";
+    public static final String SPISOK_SUSHESTVITELJNIH_PO_EFREMOVOJ = "C:\\Users\\ANESTEISHA\\список существительных по ефремовой.txt";
 
-    public static void main(String[] args) throws Exception {
+    public static final String SLOVAR_SUSHCHESTVITILNYH_S_TOLKOVANIEM = "C:\\Users\\ANESTEISHA\\1.словарь русских существительных с толкованием.txt";
+    public static final String SPISOK_NUM= "C:\\Users\\ANESTEISHA\\2.список_цифр.txt";
+    public static final String SPISOK_SLOW= "C:\\Users\\ANESTEISHA\\3.список_слов.txt";
+    public static final String SPISOK_SLOW_NUMEROVANNYJ= "C:\\Users\\ANESTEISHA\\4.список_слов_нумерованный.txt";
+    public static final String SPISOK_TOLKOVANIJ= "C:\\Users\\ANESTEISHA\\5.список_толкований.txt";
+    public static final String SPISOK_TOLKOVANIJ_NUMEROVANNYJ= "C:\\Users\\ANESTEISHA\\6.список_толкований_нумерованный.txt";
+
+    public static final String SPISOK_SLOW_SM= "C:\\Users\\ANESTEISHA\\7.список невошедших слов.txt";
+    public static final String SPISOK_SLOW_SM_PLUS= "C:\\Users\\ANESTEISHA\\8.список невошедших слов_plus.txt";
+    public static final String SPISOK_SLOW_BEZ_TOLKOVANIJ= "C:\\Users\\ANESTEISHA\\9.список слов без толкований.txt";
+
+
+    public static void main(String[] args) throws Exception{
+        FileWriter writer1 = new FileWriter(SLOVAR_SUSHCHESTVITILNYH_S_TOLKOVANIEM);
+        FileWriter writer2 = new FileWriter(SPISOK_NUM);
+        FileWriter writer3 = new FileWriter(SPISOK_SLOW);
+        FileWriter writer4 = new FileWriter(SPISOK_SLOW_NUMEROVANNYJ);
+        FileWriter writer5 = new FileWriter(SPISOK_TOLKOVANIJ);
+        FileWriter writer6 = new FileWriter(SPISOK_TOLKOVANIJ_NUMEROVANNYJ);
+        FileWriter writer7 = new FileWriter(SPISOK_SLOW_SM);
+        FileWriter writer8 = new FileWriter(SPISOK_SLOW_SM_PLUS);
+        FileWriter writer9 = new FileWriter(SPISOK_SLOW_BEZ_TOLKOVANIJ);
+
         int positionNum = 1;
-        while (nonEmptyFile("C:\\Users\\ANESTEISHA\\список существительных по ефремовой.txt")) {
+        try{
+            while (nonEmptyFile(SPISOK_SUSHESTVITELJNIH_PO_EFREMOVOJ)) {
 
-            String word = readerFirstLineFile("C:\\Users\\ANESTEISHA\\список существительных по ефремовой.txt"); //берет слово в списке слов
-            String definition = readerFileEfremova(word, "C:\\Users\\ANESTEISHA\\толковый словарь Ефремовой.txt"); //записывает толкование со словаря Ефремовой
+                    String word = getFirstWordFromList(SPISOK_SUSHESTVITELJNIH_PO_EFREMOVOJ); //берет слово в списке слов
+                    String definition = getWordDefinitionFromEfremova(word, TOLKOVYJ_SLOVAR_EFREMOVOJ); //записывает толкование со словаря Ефремовой
 
-            writerNewListWords(positionNum+". "+word, "C:\\Users\\ANESTEISHA\\список_слов_нумерованный.txt");
-            writerNewListWords(positionNum+". ", "C:\\Users\\ANESTEISHA\\список_цифр.txt");
-            writerNewListWords(positionNum+"."+definition, "C:\\ANESTEISHA\\нумерованный_список_толкований.txt");
-            writerNewListWords(definition.substring(1), "C:\\Users\\ANESTEISHA\\список_толкований.txt");
+                    if (definition.startsWith(" см.") || definition.startsWith(" То же") || definition.startsWith(" Отвлеч. сущ.") ||
+                            definition.startsWith(" Женск. к сущ.") || definition.startsWith("  Процесс действия по знач.")
+                            || definition.startsWith(" Действие по знач.")) {
+                      //  System.out.println(word + " " + definition);
+                        deleteFirstLineFromList(positionNum,SPISOK_SUSHESTVITELJNIH_PO_EFREMOVOJ);
+                        continue;
+                    }
 
-            writerNewFileVocabulary(word, definition, "C:\\Users\\ANESTEISHA\\словарь русских существительных с толкованием.txt");
+                    writerNewListWords(word, SPISOK_SLOW);
+                    writerNewListWords(positionNum + ". " + word, SPISOK_SLOW_NUMEROVANNYJ);
+                    writerNewListWords(positionNum + ". ", SPISOK_NUM);
+                    writerNewListWords(positionNum + "." + definition, SPISOK_TOLKOVANIJ_NUMEROVANNYJ);
+                    writerNewListWords(definition.substring(1), SPISOK_TOLKOVANIJ);
 
-            positionNum = deleteFirstLineFromList(positionNum,"C:\\Users\\ANESTEISHA\\список существительных по ефремовой.txt");
+                    writerNewFileVocabulary(word, definition, SLOVAR_SUSHCHESTVITILNYH_S_TOLKOVANIEM);
 
-            // System.out.println("");
+                positionNum = deleteFirstLineFromList(positionNum,SPISOK_SUSHESTVITELJNIH_PO_EFREMOVOJ);
 
+            }
+        }
+        catch (IndexOutOfBoundsException e){
+            System.out.println("Ощибка IndexOutOfBoundsException");
+        }
+
+        catch (IOException e){
+            System.out.println("Ощибка IOException");
+        }
+
+        finally{
+
+            writer1.close();
+            writer2.close();
+            writer3.close();
+            writer4.close();
+            writer5.close();
+            writer6.close();
+            writer7.close();
+            writer8.close();
+            writer9.close();
         }
 
     }
 
 
-    public static String readerFirstLineFile(String sourceFileName) throws Exception {
+    public static String getFirstWordFromList(String sourceFileName) throws Exception{
         FileReader reader = new FileReader(sourceFileName);
         Scanner scan = new Scanner(reader);
         String word=null;
-        while (scan.hasNextLine()) {
-            word = scan.nextLine(); break; // читает первую строку
-        }
+
+            while (scan.hasNextLine()) {
+                word = scan.nextLine(); break; // читает первую строку
+            }
+
         reader.close();
+        scan.close();
         return word;
     }
 
@@ -55,11 +113,10 @@ public class RussianNouns {
 
         writer.append('\n');
         writer.flush();
-        writer.close();
     }
 
 
-    public static String readerFileEfremova(String word, String fileEfremova) throws Exception{
+    public static String getWordDefinitionFromEfremova(String word, String fileEfremova) throws Exception{
         FileReader reader = new FileReader(fileEfremova);
         Scanner scan = new Scanner(reader);
         String definition = null;
@@ -87,9 +144,11 @@ public class RussianNouns {
                 if (a.startsWith(" а)")) a = a.substring(3);
 
 
-                if (a.startsWith(" см.") || a.startsWith(" То же")) {
-                    writerNewListWords(word, "C:\\Users\\ANESTEISHA\\список отсылочных слов_(см).txt");
-                    writerNewListWords(word + " -" + a, "C:\\Users\\ANESTEISHA\\список отсылочных слов_(см)_plus.txt");
+                if (a.startsWith(" см.") || a.startsWith(" То же") || a.startsWith(" Отвлеч. сущ.") || a.startsWith(" Женск. к сущ.") ||
+                       a.startsWith("  Процесс действия по знач.") || a.startsWith(" Действие по знач.")) {
+
+                    writerNewListWords(word, SPISOK_SLOW_SM);
+                    writerNewListWords(word + " -" + a, SPISOK_SLOW_SM_PLUS);
 
                 }
 
@@ -229,8 +288,9 @@ public class RussianNouns {
         // System.out.println(word + " word");
         // System.out.println(definition);
 
-        if (definition.equals(" Определение не найдено.")) writerNewListWords(word, "C:\\Users\\ANESTEISHA\\слова без толкования.txt");
-        reader.close();
+        if (definition.equals(" Определение не найдено.")) writerNewListWords(word, SPISOK_SLOW_BEZ_TOLKOVANIJ);
+
+        scan.close();
         return definition;
     }
 
@@ -271,14 +331,15 @@ public class RussianNouns {
 
             }
         }
-        reader.close();
+
+        scan.close();
         writer.flush();
         writer.close();
 
         fileDeleteRename(sourceFileName, outputFileName);
 
-        int newNum = positionNum + 1;
-        return newNum;
+        positionNum ++;
+        return positionNum;
     }
 
     //обновляет файл
@@ -287,6 +348,7 @@ public class RussianNouns {
         File writer = new File(outputFileName);
         reader.delete();
         writer.renameTo(reader);
+
     }
 
     //если файл не пустой, возвращает true
@@ -295,7 +357,8 @@ public class RussianNouns {
         FileReader reader = new FileReader(sourceFileName);
         Scanner scan = new Scanner(reader);
         if (scan.hasNextLine()) a = true;
-        reader.close();
+
+        scan.close();
         return a;
     }
 
@@ -306,6 +369,6 @@ public class RussianNouns {
         writer.write(word); //записывает данное слово
         writer.append('\n');
         writer.flush();
-        writer.close();
+
     }
 }
