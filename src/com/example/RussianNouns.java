@@ -35,7 +35,7 @@ public class RussianNouns {
         FileWriter writer6 = new FileWriter(SPISOK_TOLKOVANIJ_NUMEROVANNYJ, true);
         FileWriter writer7 = new FileWriter(SPISOK_SLOW_SM, true);
         FileWriter writer8 = new FileWriter(SPISOK_SLOW_SM_PLUS, true);
-     //   FileWriter writer9 = new FileWriter(SPISOK_SLOW_BEZ_TOLKOVANIJ, true);
+
 
         int positionNum = 1;
         try{
@@ -84,7 +84,6 @@ public class RussianNouns {
             writer6.close();
             writer7.close();
             writer8.close();
-         //   writer9.close();
         }
 
     }
