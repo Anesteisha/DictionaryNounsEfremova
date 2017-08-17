@@ -23,7 +23,6 @@ public class RussianNouns {
 
     public static final String SPISOK_SLOW_SM= "C:\\Users\\ANESTEISHA\\7.список невошедших слов.txt";
     public static final String SPISOK_SLOW_SM_PLUS= "C:\\Users\\ANESTEISHA\\8.список невошедших слов_plus.txt";
-    //  public static final String SPISOK_SLOW_BEZ_TOLKOVANIJ= "C:\\Users\\ANESTEISHA\\9.список слов без толкований.txt";
 
 
     public static void main(String[] args) throws Exception{
