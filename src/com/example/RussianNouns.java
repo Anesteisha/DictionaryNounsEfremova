@@ -23,19 +23,19 @@ public class RussianNouns {
 
     public static final String SPISOK_SLOW_SM= "C:\\Users\\ANESTEISHA\\7.список невошедших слов.txt";
     public static final String SPISOK_SLOW_SM_PLUS= "C:\\Users\\ANESTEISHA\\8.список невошедших слов_plus.txt";
-    public static final String SPISOK_SLOW_BEZ_TOLKOVANIJ= "C:\\Users\\ANESTEISHA\\9.список слов без толкований.txt";
+    //  public static final String SPISOK_SLOW_BEZ_TOLKOVANIJ= "C:\\Users\\ANESTEISHA\\9.список слов без толкований.txt";
 
 
     public static void main(String[] args) throws Exception{
-        FileWriter writer1 = new FileWriter(SLOVAR_SUSHCHESTVITILNYH_S_TOLKOVANIEM);
-        FileWriter writer2 = new FileWriter(SPISOK_NUM);
-        FileWriter writer3 = new FileWriter(SPISOK_SLOW);
-        FileWriter writer4 = new FileWriter(SPISOK_SLOW_NUMEROVANNYJ);
-        FileWriter writer5 = new FileWriter(SPISOK_TOLKOVANIJ);
-        FileWriter writer6 = new FileWriter(SPISOK_TOLKOVANIJ_NUMEROVANNYJ);
-        FileWriter writer7 = new FileWriter(SPISOK_SLOW_SM);
-        FileWriter writer8 = new FileWriter(SPISOK_SLOW_SM_PLUS);
-        FileWriter writer9 = new FileWriter(SPISOK_SLOW_BEZ_TOLKOVANIJ);
+        FileWriter writer1 = new FileWriter(SLOVAR_SUSHCHESTVITILNYH_S_TOLKOVANIEM, true); // true - дозапись, false - перезапись
+        FileWriter writer2 = new FileWriter(SPISOK_NUM, true);
+        FileWriter writer3 = new FileWriter(SPISOK_SLOW, true);
+        FileWriter writer4 = new FileWriter(SPISOK_SLOW_NUMEROVANNYJ, true);
+        FileWriter writer5 = new FileWriter(SPISOK_TOLKOVANIJ, true);
+        FileWriter writer6 = new FileWriter(SPISOK_TOLKOVANIJ_NUMEROVANNYJ, true);
+        FileWriter writer7 = new FileWriter(SPISOK_SLOW_SM, true);
+        FileWriter writer8 = new FileWriter(SPISOK_SLOW_SM_PLUS, true);
+     //   FileWriter writer9 = new FileWriter(SPISOK_SLOW_BEZ_TOLKOVANIJ, true);
 
         int positionNum = 1;
         try{
@@ -45,31 +45,33 @@ public class RussianNouns {
                     String definition = getWordDefinitionFromEfremova(word, TOLKOVYJ_SLOVAR_EFREMOVOJ); //записывает толкование со словаря Ефремовой
 
                     if (definition.startsWith(" см.") || definition.startsWith(" То же") || definition.startsWith(" Отвлеч. сущ.") ||
-                            definition.startsWith(" Женск. к сущ.") || definition.startsWith("  Процесс действия по знач.")
-                            || definition.startsWith(" Действие по знач.")) {
-                      //  System.out.println(word + " " + definition);
+                            definition.startsWith(" Женск. к сущ.") || definition.startsWith(" Процесс действия по знач.")
+                            || definition.startsWith(" Действие по знач.") || definition.startsWith(" Определение не найдено.")) {
+                        writerNewListWords(word, writer7);
+                        writerNewListWords(word + " -" + definition, writer8);
+                       // System.out.println(word + " " + definition);
                         deleteFirstLineFromList(positionNum,SPISOK_SUSHESTVITELJNIH_PO_EFREMOVOJ);
                         continue;
                     }
 
-                    writerNewListWords(word, SPISOK_SLOW);
-                    writerNewListWords(positionNum + ". " + word, SPISOK_SLOW_NUMEROVANNYJ);
-                    writerNewListWords(positionNum + ". ", SPISOK_NUM);
-                    writerNewListWords(positionNum + "." + definition, SPISOK_TOLKOVANIJ_NUMEROVANNYJ);
-                    writerNewListWords(definition.substring(1), SPISOK_TOLKOVANIJ);
+                    writerNewListWords(word, writer3);
+                    writerNewListWords(positionNum + ". " + word, writer4);
+                    writerNewListWords(positionNum + ". ", writer2);
+                    writerNewListWords(positionNum + "." + definition, writer6);
+                    writerNewListWords(definition.substring(1), writer5);
 
-                    writerNewFileVocabulary(word, definition, SLOVAR_SUSHCHESTVITILNYH_S_TOLKOVANIEM);
+                    writerNewFileVocabulary(word, definition, writer1);
 
                 positionNum = deleteFirstLineFromList(positionNum,SPISOK_SUSHESTVITELJNIH_PO_EFREMOVOJ);
 
             }
         }
         catch (IndexOutOfBoundsException e){
-            System.out.println("Ощибка IndexOutOfBoundsException");
+            System.out.println("Error IndexOutOfBoundsException");
         }
 
         catch (IOException e){
-            System.out.println("Ощибка IOException");
+            System.out.println("Error IOException");
         }
 
         finally{
@@ -82,7 +84,7 @@ public class RussianNouns {
             writer6.close();
             writer7.close();
             writer8.close();
-            writer9.close();
+         //   writer9.close();
         }
 
     }
@@ -102,10 +104,7 @@ public class RussianNouns {
         return word;
     }
 
-    public static void writerNewFileVocabulary (String word, String definition, String outputFileName) throws Exception {
-
-        FileWriter writer = new FileWriter(outputFileName, true); // true - дозапись, false - перезапись
-
+    public static void writerNewFileVocabulary (String word, String definition, FileWriter writer) throws Exception {
 
         writer.write(word); //записывает данное слово
         writer.append(" -");
@@ -142,15 +141,6 @@ public class RussianNouns {
 
                 if (a.startsWith(" 1)")) a = a.substring(3);
                 if (a.startsWith(" а)")) a = a.substring(3);
-
-
-                if (a.startsWith(" см.") || a.startsWith(" То же") || a.startsWith(" Отвлеч. сущ.") || a.startsWith(" Женск. к сущ.") ||
-                       a.startsWith("  Процесс действия по знач.") || a.startsWith(" Действие по знач.")) {
-
-                    writerNewListWords(word, SPISOK_SLOW_SM);
-                    writerNewListWords(word + " -" + a, SPISOK_SLOW_SM_PLUS);
-
-                }
 
 
 
@@ -288,7 +278,6 @@ public class RussianNouns {
         // System.out.println(word + " word");
         // System.out.println(definition);
 
-        if (definition.equals(" Определение не найдено.")) writerNewListWords(word, SPISOK_SLOW_BEZ_TOLKOVANIJ);
 
         scan.close();
         return definition;
@@ -363,8 +352,7 @@ public class RussianNouns {
     }
 
     //создаёт новый список
-    public static void writerNewListWords(String word, String outputFileName) throws Exception{
-        FileWriter writer = new FileWriter(outputFileName, true); // true - дозапись, false - перезапись
+    public static void writerNewListWords(String word, FileWriter writer) throws Exception{
 
         writer.write(word); //записывает данное слово
         writer.append('\n');
