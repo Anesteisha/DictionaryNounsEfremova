@@ -25,6 +25,7 @@ public class RussianNouns {
     public static final String SPISOK_SLOW_SM_PLUS= "C:\\Users\\ANESTEISHA\\8.список невошедших слов_plus.txt";
 
 
+
     public static void main(String[] args) throws Exception{
         FileWriter writer1 = new FileWriter(SLOVAR_SUSHCHESTVITILNYH_S_TOLKOVANIEM, true); // true - дозапись, false - перезапись
         FileWriter writer2 = new FileWriter(SPISOK_NUM, true);
@@ -43,21 +44,25 @@ public class RussianNouns {
                     String word = getFirstWordFromList(SPISOK_SUSHESTVITELJNIH_PO_EFREMOVOJ); //берет слово в списке слов
                     String definition = getWordDefinitionFromEfremova(word, TOLKOVYJ_SLOVAR_EFREMOVOJ); //записывает толкование со словаря Ефремовой
 
-                    if (definition.startsWith(" см.") || definition.startsWith(" То же") || definition.startsWith(" Отвлеч. сущ.") ||
-                            definition.startsWith(" Женск. к сущ.") || definition.startsWith(" Процесс действия по знач.")
-                            || definition.startsWith(" Действие по знач.") || definition.startsWith(" Определение не найдено.")) {
+                Pattern p = Pattern.compile("(\\Qсм.\\E)|(\\QТо же, что\\E)|(\\QОтвлеч. сущ.\\E)|(\\QЖенск. к сущ.\\E)|(\\QПроцесс действия по \\E)|(\\QДействие по \\E)|(\\QДейстие по \\E)|" +
+                        "(\\QДействия по \\E)|(\\QСостояние по \\E)|(\\QСССР\\E)|(\\QРоссийском государстве до\\E)|(\\QОпределение не найдено.\\E)");
+                Matcher m = p.matcher(definition);
+
+                if (m.find()) {
+
                         writerNewListWords(word, writer7);
-                        writerNewListWords(word + " -" + definition, writer8);
-                       // System.out.println(word + " " + definition);
+                        writerNewListWords(word + " - " + definition, writer8);
+                        System.out.println(word + " " + definition);
                         deleteFirstLineFromList(positionNum,SPISOK_SUSHESTVITELJNIH_PO_EFREMOVOJ);
                         continue;
                     }
+                m.reset();
 
                     writerNewListWords(word, writer3);
                     writerNewListWords(positionNum + ". " + word, writer4);
                     writerNewListWords(positionNum + ". ", writer2);
-                    writerNewListWords(positionNum + "." + definition, writer6);
-                    writerNewListWords(definition.substring(1), writer5);
+                    writerNewListWords(positionNum + ". " + definition, writer6);
+                    writerNewListWords(definition, writer5);
 
                     writerNewFileVocabulary(word, definition, writer1);
 
@@ -83,6 +88,7 @@ public class RussianNouns {
             writer6.close();
             writer7.close();
             writer8.close();
+
         }
 
     }
@@ -105,7 +111,7 @@ public class RussianNouns {
     public static void writerNewFileVocabulary (String word, String definition, FileWriter writer) throws Exception {
 
         writer.write(word); //записывает данное слово
-        writer.append(" -");
+        writer.append(" - ");
         writer.append(definition);//записывает определение
 
         writer.append('\n');
@@ -117,7 +123,7 @@ public class RussianNouns {
         FileReader reader = new FileReader(fileEfremova);
         Scanner scan = new Scanner(reader);
         String definition = null;
-        // word = word.trim(); // отсекает пробелы вначале и вконце слова
+
 
         while (scan.hasNextLine()){
 
@@ -162,13 +168,13 @@ public class RussianNouns {
             }
 
             else {
-                definition = " Определение не найдено.";
+                definition = "Определение не найдено.";
 
             }
 
         }
 
-              //если в строке есть лишние знаки аля " (1)", убирает
+        //если в строке есть лишние знаки аля " (1)", убирает
 
         for (int i = 1; i < 9; i++) {
 
@@ -189,77 +195,11 @@ public class RussianNouns {
 
         }
 
-        //если в строке есть лишние знаки аля " (1*)", убирает
-
-        for (int i = 1; i < 9; i++) {
-
-            if (definition.indexOf(" (" + i +"*)")>0) {
-                char[] mas = definition.toCharArray();
-                for (int j = 0; j <definition.length(); j++) {
-
-                    if(mas[j]== ' '&& mas[j+1]=='('&& mas[j+4]==')')   {
-
-                        for (int k = 1; k <=5; k++) {
-                            mas = remove(mas, j);
-                        }
-
-                        break;
-                    }
-
-                }
-
-
-                definition = definition.copyValueOf(mas);
-            }
-
-        }
-
-        //если в строке есть лишние знаки аля "(1)*", убирает
-
-        for (int i = 1; i < 9; i++) {
-
-            if (definition.indexOf("(" + i +"*)")>0) {
-                char[] mas = definition.toCharArray();
-                for (int j = 0; j <definition.length(); j++) {
-
-                    if(mas[j]== '('&& mas[j+3]==')')   {
-
-                        for (int k = 1; k <=4; k++) {
-                            mas = remove(mas, j);
-                        }
-
-                        break;
-                    }
-
-                }
-
-
-                definition = definition.copyValueOf(mas);
-            }
-
-        }
-
-        //если в строке есть лишние знаки аля " (1-2)", убирает
-
-        Pattern p = Pattern.compile("\\s\\D\\d\\D\\d\\D(\\s|\\.|,)");
-        Matcher m = p.matcher(definition);
-
-        if (m.find()) {
-            char[] mas = definition.toCharArray();
-            int j =m.start();
-
-            for (int i = 1; i <=6; i++) {
-                mas = remove(mas, j);
-            }
-
-
-            definition = definition.copyValueOf(mas);
-        }
 
         //если в строке есть лишние знаки аля " (1*2-3)", убирает
 
-        p = Pattern.compile("\\s\\D\\d\\D\\d\\D\\d\\D(\\s|\\.|,)");
-        m = p.matcher(definition);
+        Pattern p = Pattern.compile("\\s\\D\\d\\D\\d\\D\\d\\D(\\s|\\.|,)");
+        Matcher m = p.matcher(definition);
 
         if (m.find()) {
             char[] mas = definition.toCharArray();
@@ -272,6 +212,27 @@ public class RussianNouns {
             definition = definition.copyValueOf(mas);
 
         }
+        m.reset();
+
+        Pattern p2 = null;
+        Matcher m2 = null;
+
+        p2 = Pattern.compile("\\s?\\Q(противоп.: \\E.+\\Q)\\E");
+        m2 = p2.matcher(definition);
+
+        if (m2.find()) {
+            System.out.println(definition);
+            char[] mas = definition.toCharArray();
+            int j =m2.start();
+            int k =m2.end();
+            for (int i = 1; i <=k-j; i++) {
+                mas = remove(mas, j);
+            }
+
+            definition = definition.copyValueOf(mas);
+            System.out.println(definition + " ПРОТИВОП.");
+        }
+        m2.reset();
 
         // System.out.println(word + " word");
         // System.out.println(definition);
