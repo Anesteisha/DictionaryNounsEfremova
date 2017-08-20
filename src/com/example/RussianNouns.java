@@ -27,7 +27,7 @@ public class RussianNouns {
 
 
     public static void main(String[] args) throws Exception{
-        FileWriter writer1 = new FileWriter(SLOVAR_SUSHCHESTVITILNYH_S_TOLKOVANIEM, true); // true - дозапись, false - перезапись
+        FileWriter writer1 = new FileWriter(SLOVAR_SUSHCHESTVITILNYH_S_TOLKOVANIEM, true); // true - дозапись (false - перезапись)
         FileWriter writer2 = new FileWriter(SPISOK_NUM, true);
         FileWriter writer3 = new FileWriter(SPISOK_SLOW, true);
         FileWriter writer4 = new FileWriter(SPISOK_SLOW_NUMEROVANNYJ, true);
@@ -41,8 +41,8 @@ public class RussianNouns {
         try{
             while (nonEmptyFile(SPISOK_SUSHESTVITELJNIH_PO_EFREMOVOJ)) {
 
-                    String word = getFirstWordFromList(SPISOK_SUSHESTVITELJNIH_PO_EFREMOVOJ); //берет слово в списке слов
-                    String definition = getWordDefinitionFromEfremova(word, TOLKOVYJ_SLOVAR_EFREMOVOJ); //записывает толкование со словаря Ефремовой
+                    String word = getFirstWordFromList(SPISOK_SUSHESTVITELJNIH_PO_EFREMOVOJ);
+                    String definition = getWordDefinitionFromEfremova(word, TOLKOVYJ_SLOVAR_EFREMOVOJ);
 
                 Pattern p = Pattern.compile("(\\Qсм.\\E)|(\\QТо же, что\\E)|(\\QОтвлеч. сущ.\\E)|(\\QЖенск. к сущ.\\E)|(\\QПроцесс действия по \\E)|(\\QДействие по \\E)|(\\QДейстие по \\E)|" +
                         "(\\QДействия по \\E)|(\\QСостояние по \\E)|(\\QСССР\\E)|(\\QРоссийском государстве до\\E)|(\\QОпределение не найдено.\\E)");
@@ -100,7 +100,7 @@ public class RussianNouns {
         String word=null;
 
             while (scan.hasNextLine()) {
-                word = scan.nextLine(); break; // читает первую строку
+                word = scan.nextLine(); break; // читает ПЕРВУЮ строку
             }
 
         reader.close();
@@ -110,9 +110,9 @@ public class RussianNouns {
 
     public static void writerNewFileVocabulary (String word, String definition, FileWriter writer) throws Exception {
 
-        writer.write(word); //записывает данное слово
+        writer.write(word);
         writer.append(" - ");
-        writer.append(definition);//записывает определение
+        writer.append(definition);
 
         writer.append('\n');
         writer.flush();
@@ -127,19 +127,15 @@ public class RussianNouns {
 
         while (scan.hasNextLine()){
 
-            String aa = scan.nextLine(); // очередная строка записывается в строку aa
-
-            // System.out.println(word.length() + " word "); // проверить совпадает ли длина заданного слова и слова со строки
-            // System.out.println(aa.length() + " aa "); // для того же
-            // System.out.println(aa);
+            String aa = scan.nextLine();
 
 
-            // если заданное слово совпадает со словом строки aa делать
+            // если заданное слово совпадает со словом строки aa делает
             if (word.equals(aa)) {
 
 
                 String zero = scan.nextLine();  // пропускает строку после слова, там не нужная инфа
-                if (zero.startsWith(" I") || zero.startsWith("I") || zero.startsWith(" (а также")) zero = scan.nextLine(); // пропустить еще одну лишнюю строку после слова, если она есть
+                if (zero.startsWith(" I") || zero.startsWith("I") || zero.startsWith(" (а также")) zero = scan.nextLine(); // пропускает еще одну лишнюю строку после слова, если она есть
 
                 String a = scan.nextLine();
 
@@ -214,11 +210,8 @@ public class RussianNouns {
         }
         m.reset();
 
-        Pattern p2 = null;
-        Matcher m2 = null;
-
-        p2 = Pattern.compile("\\s?\\Q(противоп.: \\E.+\\Q)\\E");
-        m2 = p2.matcher(definition);
+        Pattern p2 = Pattern.compile("\\s?\\Q(противоп.: \\E.+\\Q)\\E");
+        Matcher m2 = p2.matcher(definition);
 
         if (m2.find()) {
             System.out.println(definition);
@@ -233,10 +226,6 @@ public class RussianNouns {
             System.out.println(definition + " ПРОТИВОП.");
         }
         m2.reset();
-
-        // System.out.println(word + " word");
-        // System.out.println(definition);
-
 
         scan.close();
         return definition;
@@ -263,7 +252,7 @@ public class RussianNouns {
 
         FileReader reader = new FileReader(sourceFileName);
         String outputFileName = sourceFileName + "_copy.txt";
-        FileWriter writer = new FileWriter(outputFileName, false); //false - перезапись файла-копии, true - дозапись
+        FileWriter writer = new FileWriter(outputFileName, false); //false - перезапись файла-копии
 
         Scanner scan = new Scanner(reader);
 
@@ -313,7 +302,7 @@ public class RussianNouns {
     //создаёт новый список
     public static void writerNewListWords(String word, FileWriter writer) throws Exception{
 
-        writer.write(word); //записывает данное слово
+        writer.write(word);
         writer.append('\n');
         writer.flush();
 
